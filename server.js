@@ -18,7 +18,7 @@ app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   console.log(
-    `Server running in ${process.env.NODE_ENV} on ${PORT} port...`.bgCyan
+    `Server running in ${process.env.NODE_ENV} on ${PORT} port...`.bgCyan.black
   );
   connectDB();
 });
