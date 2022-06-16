@@ -11,9 +11,11 @@ app.use(express.json());
 
 // routes
 const bootcamp = require("./routes/bootcamp");
+const course = require("./routes/course");
 
 // mount routers
 app.use("/api/v1/bootcamps", bootcamp);
+app.use("/api/v1/courses", course);
 app.use(errorHandler);
 
 const server = app.listen(PORT, () => {

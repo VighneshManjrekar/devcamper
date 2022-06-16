@@ -61,6 +61,11 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   }
 
   const bootcamps = await query;
+  // To populate courses
+  // const bootcamps = await query.populate({
+  //   path:'courses',
+  //   select: 'title',
+  // });
 
   if (!bootcamps) {
     throw error;
@@ -128,7 +133,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
-
+  bootcamp.remove();
   if (!bootcamp) {
     return next(new ErrorResponse(`No Bootcamp with id ${req.params.id}`, 404));
   }
