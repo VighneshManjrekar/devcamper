@@ -1,6 +1,8 @@
 require("dotenv").config({ path: "./configs/config.env" });
 require("colors");
+const path = require("path");
 const express = require("express");
+const fileupload = require("express-fileupload");
 const connectDB = require("./configs/db");
 const errorHandler = require("./middleware/error");
 
@@ -8,6 +10,14 @@ const PORT = process.env.PORT || 7000;
 
 const app = express();
 app.use(express.json());
+// Filehandling express middleware
+app.use(
+  fileupload({
+    createParentPath: true,
+  })
+);
+// Serving static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // routes
 const bootcamp = require("./routes/bootcamp");

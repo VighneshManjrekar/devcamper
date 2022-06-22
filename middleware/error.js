@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
 
   // castError handler
   if (error.name == "CastError") {
-    error.message = `Bootcamp with id ${error.value} cannot be find`;
+    error.message = `Invalid Id ${error.value}`;
     new ErrorResponse(error.message, 404);
   }
 
@@ -25,11 +25,13 @@ const errorHandler = (err, req, res, next) => {
   if (error.name == "ValidationError") {
     const errors = Object.values(err.errors).map((e) => e.properties.message);
     error.message = errors;
-    new ErrorResponse(error.message, 400);
+    error.status = 400;
+    console.log(error.message);
+    new ErrorResponse(error.message, error.status);
   }
 
   res
-    .status(err.status || 500)
+    .status(error.status || 500)
     .json({ success: false, error: error.message || "Internal Server Error" });
 };
 
