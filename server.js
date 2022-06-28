@@ -3,6 +3,7 @@ require("colors");
 const path = require("path");
 const express = require("express");
 const fileupload = require("express-fileupload");
+const cookieParser = require("cookie-parser")
 const connectDB = require("./configs/db");
 const errorHandler = require("./middleware/error");
 
@@ -16,16 +17,22 @@ app.use(
     createParentPath: true,
   })
 );
+
+// cookie parser
+app.use(cookieParser())
+
 // Serving static files
 app.use(express.static(path.join(__dirname, "public")));
 
 // routes
 const bootcamp = require("./routes/bootcamp");
 const course = require("./routes/course");
+const auth = require("./routes/auth");
 
 // mount routers
 app.use("/api/v1/bootcamps", bootcamp);
 app.use("/api/v1/courses", course);
+app.use("/api/v1/auth", auth);
 app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
