@@ -67,11 +67,13 @@ CourseSchema.post("save", async (doc) => {
   await doc.constructor.getAverageCost(doc.bootcamp);
 });
 
-CourseSchema.post("findOneAndDelete", async (doc) => {
+CourseSchema.post("remove", async (doc) => {
   await doc.constructor.getAverageCost(doc.bootcamp);
 });
 
-CourseSchema.post("findOneAndUpdate", async (doc) => {
-  await doc.constructor.getAverageCost(doc.bootcamp);
+CourseSchema.post("findOneAndUpdate", async function (doc) {
+  if (this.tuition != doc.tuition) {
+    await doc.constructor.getAverageCost(doc.bootcamp);
+  }
 });
 module.exports = mongoose.model("Course", CourseSchema);

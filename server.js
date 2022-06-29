@@ -28,11 +28,13 @@ app.use(express.static(path.join(__dirname, "public")));
 const bootcamp = require("./routes/bootcamp");
 const course = require("./routes/course");
 const auth = require("./routes/auth");
+const admin = require("./routes/admin");
 
 // mount routers
 app.use("/api/v1/bootcamps", bootcamp);
 app.use("/api/v1/courses", course);
 app.use("/api/v1/auth", auth);
+app.use("/api/v1/auth/admin", admin);
 app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
