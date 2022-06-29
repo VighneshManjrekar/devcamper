@@ -1,12 +1,11 @@
-const mongoose = require("mongoose");
+const crypto = require("crypto");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
-const Bootcamp = require("../models/Bootcamp");
 const User = require("../models/User");
-// const geocoder = require("../middleware/geocode");
+const sendMail = require("../utils/mail");
 
 // helper function
-const setCookie = (user, statusCode, res) => {
+const sendToken = (user, statusCode, res) => {
   const token = user.getSignToken();
 
   const secure = process.env.NODE_ENV == "production" ? true : false;
@@ -37,7 +36,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     password,
   });
 
-  setCookie(user, 200, res);
+  sendToken(user, 200, res);
 });
 
 // @desc    Login user
@@ -56,7 +55,118 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
 
-  setCookie(user, 200, res);
+  sendToken(user, 200, res);
+});
+
+// @desc    Forgot password
+// @route   POST api/v1/auth/forgot-password
+// @access  Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorResponse(`No user with email ${email}`));
+  }
+
+  const resetToken = user.createHashPassword();
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/auth/reset-password/${resetToken}`;
+  const text = `
+  Hi ${user.name},
+  You recently requested to reset the password for your DevCamper account. Follow this link to proceed:
+  ${resetUrl}.
+
+  Thanks, DevCamper team
+  `;
+  const option = {
+    to: user.email,
+    subject: "Reset Password",
+    text,
+  };
+
+  user = await user.save({ validateBeforeSave: true });
+
+  try {
+    await sendMail(option);
+  } catch (err) {
+    console.log(err);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordDate = undefined;
+    await user.save();
+    return next(new ErrorResponse("Email not sent", 500));
+  }
+
+  res.status(200).json({ success: true, data: "Email sent" });
+});
+
+// @desc    Reset password
+// @route   PUT api/v1/auth/reset-password/:resetToken
+// @access  Public
+exports.resetPassowrd = asyncHandler(async (req, res, next) => {
+  const { password } = req.body;
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.resetToken)
+    .digest("hex");
+
+  let user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordDate: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse("Invalid token", 401));
+  }
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordDate = undefined;
+
+  user = await user.save();
+
+  sendToken(user, 200, res);
+});
+
+// @desc    Update password
+// @route   PUT api/v1/auth/update-password
+// @access  Private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const { currentPassword, newPassword } = req.body;
+
+  let user = await User.findById(req.user.id).select("+password");
+
+  if (!(await user.matchPassword(currentPassword))) {
+    return next(new ErrorResponse("Incorrect password", 400));
+  }
+
+  user.password = newPassword;
+  user = await user.save();
+
+  sendToken(user, 200, res);
+});
+
+// @desc    Update user
+// @route   PUT api/v1/auth/update-user
+// @access  Private
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const { email, name } = req.body;
+  console.log(email,name)
+  const updateDetails = {
+    email,
+    name,
+  };
+  let user = await User.findByIdAndUpdate(req.user.id, updateDetails, {
+    new: true,
+    runValidators: true,
+  });
+
+  // if(!user){
+  //   return next(new ErrorResponse("Incorrect password", 400))
+  // }
+
+  res.status(200).json({ success: true, data: user });
 });
 
 // @desc    Get user
