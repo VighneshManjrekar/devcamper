@@ -3,8 +3,8 @@ const { register, login, getMe } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 
-router.post("/register", protect, register);
-router.post("/login", protect, login);
+router.post("/register", register);
+router.post("/login", login);
 router.get("/me", protect, getMe);
 
 module.exports = router;

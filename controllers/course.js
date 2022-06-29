@@ -10,8 +10,12 @@ const Bootcamp = require("../models/Bootcamp");
 // @access  Public
 exports.getAllCourses = asyncHandler(async (req, res, next) => {
   // check if id valid , then find
-  if (!mongoose.Types.ObjectId.isValid(req.params.bootcampId)) {
-    return next(new ErrorResponse(`Invalid Id ${req.params.bootcampId}`, 400));
+  if (req.params.bootcampId) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.bootcampId)) {
+      return next(
+        new ErrorResponse(`Invalid Id ${req.params.bootcampId}`, 400)
+      );
+    }
   }
 
   const bootcamp = req.params.bootcampId;
@@ -48,6 +52,8 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
   const bootcampId = req.params.bootcampId;
+  req.body.user = req.user._id;
+
   // check if id valid , then find
   if (!mongoose.Types.ObjectId.isValid(bootcampId)) {
     return next(new ErrorResponse(`Invalid Id ${bootcampId}`, 400));
@@ -59,6 +65,14 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 
   // manually set bootcampId for course model
   req.body.bootcamp = bootcampId;
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to create a course in bootcamp ${bootcamp._id}`,
+        401
+      )
+    );
+  }
 
   const course = await Course.create(req.body);
 
@@ -70,16 +84,31 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 //@access  Private
 exports.updateCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
+
   if (!mongoose.Types.ObjectId.isValid(courseId)) {
     return next(new ErrorResponse(`Invalid id ${courseId}`, 400));
   }
-  const courseUpdated = await Course.findByIdAndUpdate(courseId, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!courseUpdated) {
+  const course = await Course.findById(courseId);
+  if (!course) {
     return next(new ErrorResponse(`No course with id ${courseId}`, 400));
   }
+
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to update a course in bootcamp ${course._id}`,
+        401
+      )
+    );
+  }
+  const courseUpdated = await Course.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   return res.json({ success: true, data: courseUpdated });
 });
@@ -93,11 +122,21 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Invalid id ${courseId}`, 400));
   }
 
-  const courseDeleted = await Course.findByIdAndDelete(courseId);
+  const course = await Course.findById(courseId);
 
-  if (!courseDeleted) {
+  if (!course) {
     return next(new ErrorResponse(`No course with id ${courseId}`, 400));
   }
+
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to delete a course in bootcamp ${course._id}`,
+        401
+      )
+    );
+  }
+  const courseDeleted = await course.remove();
 
   res.json({ success: true, data: courseDeleted });
 });

@@ -34,6 +34,11 @@ const CourseSchema = new mongoose.Schema({
     ref: "Bootcamp",
     requried: true,
   },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    requried: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -46,7 +51,9 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
     { $group: { _id: "$bootcamp", averageCost: { $avg: "$tuition" } } },
   ]);
 
-  const averageCost = obj[0] ? (Math.ceil(obj[0].averageCost / 10) * 10) : undefined;
+  const averageCost = obj[0]
+    ? Math.ceil(obj[0].averageCost / 10) * 10
+    : undefined;
   try {
     await this.model("Bootcamp").findByIdAndUpdate(bootcampId, {
       averageCost,

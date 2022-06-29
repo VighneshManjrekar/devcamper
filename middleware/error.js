@@ -30,6 +30,12 @@ const errorHandler = (err, req, res, next) => {
     new ErrorResponse(error.message, error.status);
   }
 
+  if (error.name == "JsonWebTokenError" && error.message == "jwt malformed") {
+    error.message = "Invalid token";
+    error.status = 401;
+    new ErrorResponse(error.message, error.status);
+  }
+
   res
     .status(error.status || 500)
     .json({ success: false, error: error.message || "Internal Server Error" });
