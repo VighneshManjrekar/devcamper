@@ -13,6 +13,7 @@ mongoose.connect(process.env.MONGO_URI);
 const Bootcamp = require("./models/Bootcamp");
 const Course = require("./models/Course");
 const User = require("./models/User");
+const Review = require("./models/Review");
 
 // load bootcamp data
 const bootcampData = JSON.parse(
@@ -27,11 +28,16 @@ const userData = JSON.parse(
   fs.readFileSync(path.join(__dirname, "data", "users.json"))
 );
 
+const reviewData = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "data", "reviews.json"))
+);
+
 const importData = async () => {
   try {
     await Bootcamp.create(bootcampData);
     await Course.create(courseData);
     await User.create(userData);
+    await Review.create(reviewData);
     console.log("Data imported...".bgGreen);
   } catch (err) {
     console.error(err);
@@ -45,6 +51,7 @@ const deleteData = async () => {
     await Bootcamp.deleteMany();
     await Course.deleteMany();
     await User.deleteMany();
+    await Review.deleteMany();
     console.log("Data deleted".bgRed);
   } catch (error) {
     console.error(error);

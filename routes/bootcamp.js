@@ -9,6 +9,10 @@ const {
   bootcampPhotoUpload,
 } = require("../controllers/bootcamp");
 
+// Include another routes
+const courseRoutes = require("./course");
+const reviewRoutes = require("./review");
+
 // middlewares
 const filterResults = require("../middleware/filter");
 const { protect, authorization } = require("../middleware/auth");
@@ -16,8 +20,9 @@ const { protect, authorization } = require("../middleware/auth");
 // Bootcamp model
 const Bootcamp = require("../models/Bootcamp");
 
-// Include another routes
-const courseRoutes = require("./course");
+// Rerouting to another resource router
+router.use("/:bootcampId/courses", courseRoutes);
+router.use("/:bootcampId/reviews", reviewRoutes);
 
 router
   .route("/")
@@ -35,8 +40,5 @@ router
 router
   .route("/:id/photo")
   .put(protect, authorization("publisher", "admin"), bootcampPhotoUpload);
-
-// Rerouting to another resource router
-router.use("/:bootcampId/courses", courseRoutes);
 
 module.exports = router;

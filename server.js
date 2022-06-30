@@ -3,7 +3,7 @@ require("colors");
 const path = require("path");
 const express = require("express");
 const fileupload = require("express-fileupload");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 const connectDB = require("./configs/db");
 const errorHandler = require("./middleware/error");
 
@@ -19,7 +19,7 @@ app.use(
 );
 
 // cookie parser
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Serving static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -27,12 +27,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // routes
 const bootcamp = require("./routes/bootcamp");
 const course = require("./routes/course");
+const review = require("./routes/review");
 const auth = require("./routes/auth");
 const admin = require("./routes/admin");
 
 // mount routers
 app.use("/api/v1/bootcamps", bootcamp);
 app.use("/api/v1/courses", course);
+app.use("/api/v1/reviews", review);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/auth/admin", admin);
 app.use(errorHandler);
