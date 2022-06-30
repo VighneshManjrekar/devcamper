@@ -152,7 +152,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const { email, name } = req.body;
-  console.log(email,name)
+  console.log(email, name);
   const updateDetails = {
     email,
     name,
@@ -173,6 +173,20 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @route   POST api/v1/auth/me
 // @access  Private
 exports.getMe = asyncHandler(async (req, res, next) => {
+  if (!req.user) {
+    return next(new ErrorResponse(`Please login to access this route`, 400));
+  }
   const user = await User.findById(req.user._id);
   res.status(200).json({ success: true, data: user });
+});
+
+// @desc    Logout user
+// @route   GET api/v1/auth/logout
+// @access  Public
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ success: true, data: {} });
 });

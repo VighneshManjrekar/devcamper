@@ -4,13 +4,24 @@ const path = require("path");
 const express = require("express");
 const fileupload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
+
+// Security pkgs
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
+const cors = require("cors")
+
 const connectDB = require("./configs/db");
 const errorHandler = require("./middleware/error");
 
 const PORT = process.env.PORT || 7000;
 
 const app = express();
+
 app.use(express.json());
+
 // Filehandling express middleware
 app.use(
   fileupload({
@@ -20,6 +31,28 @@ app.use(
 
 // cookie parser
 app.use(cookieParser());
+
+// Remove data using these defaults:
+app.use(mongoSanitize());
+
+// Security headers
+app.use(helmet());
+
+// Prevent XSS
+app.use(xss());
+
+// Limit req rate
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 15 minutes
+  max: 100, // Each ip maximum 100 requests per 15 minutes
+});
+app.use(limiter);
+
+// Protect against HTTP Parameter Pollution attacks
+app.use(hpp());
+
+// Enable CORS
+app.use(cors())
 
 // Serving static files
 app.use(express.static(path.join(__dirname, "public")));

@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
 
   // castError handler
   if (error.name == "CastError") {
-    error.message = `Invalid Id ${error.value}`;
+    error.message = `Invalid Resource Id`;
     new ErrorResponse(error.message, 404);
   }
 
