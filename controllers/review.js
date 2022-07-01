@@ -17,7 +17,9 @@ exports.getReviews = asyncHandler(async (req, res, next) => {
 
     const reviews = await Review.find({ bootcamp });
 
-    res.status(200).json({ success: true, data: reviews });
+    res
+      .status(200)
+      .json({ success: true, count: reviews.length, data: reviews });
   } else {
     res.status(200).json({ success: true, data: res.filterResults });
   }
@@ -47,7 +49,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: review });
 });
 
-// @desc  Post review
+// @desc  Create review
 // @route POST api/v1/bootcamps/:bootcampId/reviews
 // access Private
 exports.postReview = asyncHandler(async (req, res, next) => {

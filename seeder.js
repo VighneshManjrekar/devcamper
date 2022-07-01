@@ -15,7 +15,7 @@ const Course = require("./models/Course");
 const User = require("./models/User");
 const Review = require("./models/Review");
 
-// load bootcamp data
+// load data
 const bootcampData = JSON.parse(
   fs.readFileSync(path.join(__dirname, "data", "bootcamps.json"))
 );
