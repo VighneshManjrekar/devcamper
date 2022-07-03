@@ -36,9 +36,9 @@ node seeder -i
 
 ## Demo
 
-Extensive documentation with examples [here](https://documenter.getpostman.com/view/8923145/SVtVVTzd?version=latest)
+Extensive documentation with examples [here](https://documenter.getpostman.com/view/21091542/UzJERJJA)
 
-BASE URL: "[http://localhost:7000/"](http://localhost:7000/)
+BASE URL {{URL}}: "[https://devcamp-v1.herokuapp.com/"](https://devcamp-v1.herokuapp.com/)
 
 ## Endpoints
 

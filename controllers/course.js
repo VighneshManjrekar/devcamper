@@ -79,9 +79,9 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: course });
 });
 
-//@desc    Update course
-//@route   PUT api/v1/courses/:id
-//@access  Private
+// @desc    Update course
+// @route   PUT api/v1/courses/:id
+// @access  Private
 exports.updateCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
 
@@ -113,9 +113,9 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
   return res.json({ success: true, data: courseUpdated });
 });
 
-//@desc   Delete a course
-//@route  DELETE api/v1/courses/:id
-//@access Private
+// @desc   Delete a course
+// @route  DELETE api/v1/courses/:id
+// @access Private
 exports.deleteCourse = asyncHandler(async (req, res, next) => {
   const courseId = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(courseId)) {

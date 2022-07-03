@@ -70,9 +70,14 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   }
 
   const resetToken = user.createHashPassword();
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/auth/reset-password/${resetToken}`;
+  let resetUrl;
+  if (process.env.NODE_ENV == "production") {
+    resetUrl = `https://devcamp-v1.herokuapp.com/api/v1/auth/reset-password/${resetToken}`;
+  } else {
+    resetUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/auth/reset-password/${resetToken}`;
+  }
   const text = `
   Hi ${user.name},
   You recently requested to reset the password for your DevCamper account. Follow this link to proceed:

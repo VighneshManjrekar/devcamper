@@ -6,7 +6,7 @@ const User = require("../models/User");
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
   let authToken = req.headers.authorization;
-
+  
   if (authToken && authToken.startsWith("Bearer")) {
     token = authToken.split(" ")[1];
   }

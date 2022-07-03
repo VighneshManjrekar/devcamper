@@ -7,7 +7,7 @@ const Review = require("../models/Review");
 // @desc  Get all reviews
 // @route GET api/v1/reviews
 // @route GET api/v1/bootcamps/:bootcampId/reviews
-// access Public
+// @access Public
 exports.getReviews = asyncHandler(async (req, res, next) => {
   const bootcamp = req.params.bootcampId;
   if (bootcamp) {
@@ -27,7 +27,7 @@ exports.getReviews = asyncHandler(async (req, res, next) => {
 
 // @desc  Get single review
 // @route GET api/v1/reviews/:id
-// access Public
+// @access Public
 exports.getReview = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
   if (!id) {
@@ -51,7 +51,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 
 // @desc  Create review
 // @route POST api/v1/bootcamps/:bootcampId/reviews
-// access Private
+// @access Private
 exports.postReview = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
   req.body.user = req.user.id;
@@ -70,7 +70,7 @@ exports.postReview = asyncHandler(async (req, res, next) => {
 
 // @desc  Update review
 // @route PUT api/v1/reviews/:id
-// access Private
+// @access Private
 exports.updateReview = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
@@ -99,7 +99,7 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
 
 // @desc  Delete review
 // @route DELETE api/v1/reviews/:id
-// access Private
+// @access Private
 exports.deleteReview = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
