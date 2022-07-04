@@ -1,20 +1,21 @@
 const nodemailer = require("nodemailer");
-const sgTransport = require("nodemailer-sendgrid-transport");
+const sgMail = require("@sendgrid/mail");
 
 const sendMail = async ({ to, subject, text }) => {
-  let transporter;
-  // for production use sendgrid
+  const { to, subject, text } = options;
+  const message = {
+    from: `${process.env.SMTP_FROM_NAME} <${process.env.SMTP_FROM_EMAIL}>`,
+    to,
+    subject,
+    text,
+  };
   if (process.env.NODE_ENV == "production") {
-    transporter = nodemailer.createTransport(
-      sgTransport({
-        auth: {
-          api_key: process.env.SENDGRID_PASS,
-        },
-      })
-    );
+    // for production use sendgrid
+    sgMail.setApiKey(process.env.SENDGRID_PASS);
+    await sgMail.send(message);
   } else {
     // for development use mailtrap
-    transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
       auth: {
@@ -22,16 +23,8 @@ const sendMail = async ({ to, subject, text }) => {
         pass: process.env.SMTP_PASS,
       },
     });
+    await transporter.sendMail(message);
   }
-
-  const message = {
-    from: `${process.env.SMTP_FROM_NAME} <${process.env.SMTP_FROM_EMAIL}>`,
-    to,
-    subject,
-    text,
-  };
-
-  await transporter.sendMail(message);
 };
 
 module.exports = sendMail;
