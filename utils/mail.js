@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const sgMail = require("@sendgrid/mail");
 
 const sendMail = async ({ to, subject, text }) => {
-  const { to, subject, text } = options;
   const message = {
     from: `${process.env.SMTP_FROM_NAME} <${process.env.SMTP_FROM_EMAIL}>`,
     to,
