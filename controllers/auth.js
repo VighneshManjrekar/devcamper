@@ -72,7 +72,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = user.createHashPassword();
   let resetUrl;
   if (process.env.NODE_ENV == "production") {
-    resetUrl = `https://devcamp-v1.herokuapp.com/api/v1/auth/reset-password/${resetToken}`;
+    resetUrl = `https://devcamper-api-v1.vercel.app/api/v1/auth/reset-password/${resetToken}`;
   } else {
     resetUrl = `${req.protocol}://${req.get(
       "host"
