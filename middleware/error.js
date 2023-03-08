@@ -17,9 +17,10 @@ const errorHandler = (err, req, res, next) => {
 
   // Duplicate field error
   if (error.code == 11000) {
-    error.message = "Duplicate field value entered";
-    if ((error.keyPattern.user == error.keyPattern.user) == 1) {
-      error.message = "One user can only write single review on an each bootcamp";
+    error.message = `${Object.keys(error.keyValue).join("")} already exists`;
+    if (Object.keys(error.keyValue).includes("user")) {
+      error.message =
+        "One user can only write single review on an each bootcamp";
     }
     error.status = 400;
     new ErrorResponse(error.message, error.status);
