@@ -81,7 +81,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const text = `
   Hi ${user.name},
   You recently requested to reset the password for your DevCamper account. Follow this link to proceed:
-  ${resetUrl}.
+  ${resetUrl}
 
   Thanks, DevCamper team
   `;
@@ -157,7 +157,6 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const { email, name } = req.body;
-  console.log(email, name);
   const updateDetails = {
     email,
     name,

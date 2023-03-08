@@ -38,8 +38,6 @@ node seeder -i
 
 Extensive documentation with examples [here](https://documenter.getpostman.com/view/21091542/UzJERJJA)
 
-BASE URL {{URL}}: "[https://devcamp-v1.herokuapp.com/"](https://devcamp-v1.herokuapp.com/)
-
 ## Endpoints
 
 - [Bootcamps](#bootcamps)
